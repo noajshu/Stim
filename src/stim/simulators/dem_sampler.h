@@ -75,6 +75,15 @@ struct DemSampler {
         SampleFormat replay_err_in_format);
 };
 
+/// Convenience method for sampling detection events from a detector error model.
+///
+/// Uses DemSampler internally and stores all results in memory at once. The
+/// returned tables have the detector (or observable) index as their major axis
+/// and the shot index as their minor axis.
+template <size_t W>
+std::pair<simd_bit_table<W>, simd_bit_table<W>> sample_batch_detection_events(
+    const DetectorErrorModel &model, size_t num_shots, std::mt19937_64 &rng);
+
 }  // namespace stim
 
 #include "stim/simulators/dem_sampler.inl"
