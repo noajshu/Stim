@@ -98,3 +98,16 @@ TEST_EACH_WORD_SIZE_W(DemSampler, resample_combinations, {
         ASSERT_FALSE(total.not_zero());
     }
 })
+
+TEST_EACH_WORD_SIZE_W(DemSampler, sample_batch_detection_events, {
+    auto rng = INDEPENDENT_TEST_RNG();
+    DetectorErrorModel dem(R"DEM(
+        error(1) D0 L0
+        error(0) D1
+    )DEM");
+    auto result = sample_batch_detection_events<W>(dem, 5, rng);
+    ASSERT_EQ(result.first[0].popcnt(), 5);
+    ASSERT_EQ(result.first[1].popcnt(), 0);
+    ASSERT_EQ(result.second[0].popcnt(), 5);
+})
+

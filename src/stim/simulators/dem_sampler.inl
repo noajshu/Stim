@@ -127,4 +127,17 @@ void DemSampler<W>::sample_write(
     }
 }
 
+template <size_t W>
+std::pair<simd_bit_table<W>, simd_bit_table<W>> sample_batch_detection_events(
+    const DetectorErrorModel &model, size_t num_shots, std::mt19937_64 &rng) {
+    DemSampler<W> sampler(model, std::move(rng), num_shots);
+    sampler.resample(false);
+    simd_bit_table<W> dets((size_t)sampler.num_detectors, num_shots);
+    simd_bit_table<W> obs((size_t)sampler.num_observables, num_shots);
+    sampler.det_buffer.copy_into_different_size_table(dets);
+    sampler.obs_buffer.copy_into_different_size_table(obs);
+    rng = std::move(sampler.rng);
+    return {std::move(dets), std::move(obs)};
+}
+
 }  // namespace stim
